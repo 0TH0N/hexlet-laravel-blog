@@ -20,4 +20,24 @@ class ArticleController extends Controller
 
         return view('article.show', ['article' => $article]);
     }
+
+    public function create()
+    {
+        $article = new Article();
+
+        return view('article.create', compact('article'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $this->validate($request, [
+            'name' => 'required|unique:articles',
+            'body' => 'required|min:10',
+        ]);
+        $article = new Article();
+        $article->fill($data);
+        $article->save();
+
+        return redirect()->route('articles.index');
+    }
 }
