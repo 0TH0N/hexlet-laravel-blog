@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Article;
+use Exception;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Application|Factory|View
+     */
     public function index()
     {
         $articles = Article::paginate(3);
@@ -14,13 +25,11 @@ class ArticleController extends Controller
         return view('article.index', compact('articles'));
     }
 
-    public function show($id)
-    {
-        $article = Article::findOrFail($id);
-
-        return view('article.show', ['article' => $article]);
-    }
-
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Application|Factory|View
+     */
     public function create()
     {
         $article = new Article();
@@ -28,6 +37,13 @@ class ArticleController extends Controller
         return view('article.create', compact('article'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
     public function store(Request $request)
     {
         $data = $this->validate($request, [
@@ -41,16 +57,38 @@ class ArticleController extends Controller
         return redirect()->route('articles.index');
     }
 
-    public function edit($id)
+    /**
+     * Display the specified resource.
+     *
+     * @param Article $article
+     * @return Application|Factory|View
+     */
+    public function show(Article $article)
     {
-        $article = Article::findOrFail($id);
+        return view('article.show', ['article' => $article]);
+    }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param Article $article
+     * @return Application|Factory|View
+     */
+    public function edit(Article $article)
+    {
         return view('article.edit', compact('article'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @param Article $article
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
+    public function update(Request $request, Article $article)
     {
-        $article = Article::findOrFail($id);
         $data = $this->validate($request, [
             'name' => 'required|unique:articles,name,' . $article->id,
             'body' => 'required|min:20',
@@ -61,13 +99,16 @@ class ArticleController extends Controller
         return redirect()->route('articles.index');
     }
 
-    public function delete($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Article $article
+     * @return RedirectResponse
+     * @throws Exception
+     */
+    public function destroy(Article $article)
     {
-        $article = Article::find($id);
-
-        if ($article) {
-            $article->delete();
-        }
+        $article->delete();
 
         return redirect()->route('articles.index');
     }

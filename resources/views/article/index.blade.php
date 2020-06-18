@@ -6,7 +6,7 @@
         <h2><a href="{{ route('articles.edit', $article) }}">{{ $article->name }}</a></h2>
         <div>{{ Str::limit($article->body, 200) }}</div>
         {{ Form::open([
-            'url'    => route('articles.delete', $article),
+            'url'    => route('articles.destroy', $article),
             'method' => 'DELETE',
             ]) }}
         {{ Form::submit('Удалить') }}
