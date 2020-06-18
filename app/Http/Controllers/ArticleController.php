@@ -60,4 +60,15 @@ class ArticleController extends Controller
 
         return redirect()->route('articles.index');
     }
+
+    public function delete($id)
+    {
+        $article = Article::find($id);
+
+        if ($article) {
+            $article->delete();
+        }
+
+        return redirect()->route('articles.index');
+    }
 }
